@@ -1,6 +1,11 @@
+# USAGE -->
+# TO RUN THE WEB SERVER (ON PORT 80):
+### $ docker compose up
+# TO GENERATE HTML (IN PUBLIC FOLDER):
+### $ docker exec devops-wiki-devops-wiki-1 hexo generate
 ---
 version: "3.5"
-services: # EXAMPLE: docker compose up
+services:
   devops-wiki:
     image: anthonyrussano/wiki-server:latest
     deploy:
@@ -8,7 +13,7 @@ services: # EXAMPLE: docker compose up
         constraints:
           - node.role == manager
     ports:
-      - 4006:4000
+      - 80:4000
     volumes:
       - ./public:/site/public
       - ./source:/site/source

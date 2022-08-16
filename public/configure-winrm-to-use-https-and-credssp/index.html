@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Wiki</title>
+
+    <link href="https://res.cloudinary.com/alchemist-cookbook/image/upload/Asm" rel="icon">
+
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script src="../libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="../libs/font-awesome/css/font-awesome.min.css">
+
+</head>
+
+<body>
+    <div id="container">
+        <div class="outer">
+            <section id="main">    
+                <div class="widget-wrap">
+                    <h3 class="widget-title">   
+                        &nbsp;
+                        <span><i onclick="myFunction3()" class="fa fa-search"></i></span>
+                        <span style="cursor: pointer;" onclick="myFunction1()">Index</span> <span style="cursor: pointer;" onclick="myFunction2()">Keywords</span> <a style="display: none;" id='allExpand' href="#">
+                            <i class="fa fa-angle-double-down fa-2x"></i>
+                        </a>
+                    </h3>
+                    
+                        <a href="../index.html">↶ Return Home</a>
+                        
+                    <script type="text/javascript">
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>Loading Search Index...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url.replace(/^\/+/g, '');
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match articles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='../" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No Results Found<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>Search Index File Not Found<span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>Search Service Error<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+</script>
+                    <br>
+                    <input id="local-search-input" type="search" class="ins-search-input" placeholder="Search..." />
+                    <div id="local-search-result"></div>
+                    <div id='tags' style="display: none; text-align:justify;"><a href="../tags/apis/" style="font-size: 22px;">APIs</a> <a href="../tags/awk/" style="font-size: 22px;">AWK</a> <a href="../tags/aws/" style="font-size: 42px;">AWS</a> <a href="../tags/aws-cli/" style="font-size: 22px;">AWS CLI</a> <a href="../tags/aws-ecs/" style="font-size: 22px;">AWS ECS</a> <a href="../tags/aws-infrastructure/" style="font-size: 22px;">AWS Infrastructure</a> <a href="../tags/aws-management/" style="font-size: 22px;">AWS Management</a> <a href="../tags/amazon-qldb/" style="font-size: 22px;">Amazon QLDB</a> <a href="../tags/analytics/" style="font-size: 24.5px;">Analytics</a> <a href="../tags/analytics-platform/" style="font-size: 22px;">Analytics Platform</a> <a href="../tags/ansible/" style="font-size: 29.5px;">Ansible</a> <a href="../tags/ansible-galaxy/" style="font-size: 22px;">Ansible Galaxy</a> <a href="../tags/ansible-windows-configuration/" style="font-size: 24.5px;">Ansible Windows Configuration</a> <a href="../tags/apache-subversion/" style="font-size: 22px;">Apache Subversion</a> <a href="../tags/application-deployment/" style="font-size: 22px;">Application Deployment</a> <a href="../tags/application-layer-protocols/" style="font-size: 27px;">Application Layer Protocols</a> <a href="../tags/asus/" style="font-size: 22px;">Asus</a> <a href="../tags/automotive/" style="font-size: 22px;">Automotive</a> <a href="../tags/best-practices/" style="font-size: 22px;">Best Practices</a> <a href="../tags/big-data/" style="font-size: 27px;">Big Data</a> <a href="../tags/busybox/" style="font-size: 22px;">Busybox</a> <a href="../tags/cd/" style="font-size: 22px;">CD</a> <a href="../tags/cli-tools/" style="font-size: 22px;">CLI Tools</a> <a href="../tags/cheat-sheets/" style="font-size: 22px;">Cheat Sheets</a> <a href="../tags/class-based-programming-languages/" style="font-size: 22px;">Class-based programming languages</a> <a href="../tags/cloudformation/" style="font-size: 22px;">CloudFormation</a> <a href="../tags/cloudflare/" style="font-size: 22px;">Cloudflare</a> <a href="../tags/clusters/" style="font-size: 22px;">Clusters</a> <a href="../tags/command-line-tools/" style="font-size: 29.5px;">Command Line Tools</a> <a href="../tags/communication-protocols/" style="font-size: 22px;">Communication Protocols</a> <a href="../tags/computer-science/" style="font-size: 22px;">Computer science</a> <a href="../tags/concurrent-versions-system/" style="font-size: 22px;">Concurrent Versions System</a> <a href="../tags/config/" style="font-size: 22px;">Config</a> <a href="../tags/configuration-files/" style="font-size: 22px;">Configuration Files</a> <a href="../tags/configuration-management/" style="font-size: 24.5px;">Configuration Management</a> <a href="../tags/container-orchestration/" style="font-size: 37px;">Container Orchestration</a> <a href="../tags/containers/" style="font-size: 34.5px;">Containers</a> <a href="../tags/content-delivery-networks/" style="font-size: 22px;">Content Delivery Networks</a> <a href="../tags/cross-platform-software/" style="font-size: 22px;">Cross-Platform Software</a> <a href="../tags/cross-platform/" style="font-size: 22px;">Cross-platform</a> <a href="../tags/cryptographic-network-protocols/" style="font-size: 22px;">Cryptographic Network Protocols</a> <a href="../tags/cybersecurity/" style="font-size: 22px;">Cybersecurity</a> <a href="../tags/ddos-mitigation/" style="font-size: 22px;">DDoS Mitigation</a> <a href="../tags/data-analysis/" style="font-size: 24.5px;">Data Analysis</a> <a href="../tags/data-collection/" style="font-size: 22px;">Data Collection</a> <a href="../tags/data-manipulation/" style="font-size: 22px;">Data Manipulation</a> <a href="../tags/data-visualization/" style="font-size: 22px;">Data Visualization</a> <a href="../tags/data-science/" style="font-size: 22px;">Data science</a> <a href="../tags/database-administration/" style="font-size: 22px;">Database Administration</a> <a href="../tags/debian/" style="font-size: 22px;">Debian</a> <a href="../tags/desktop/" style="font-size: 22px;">Desktop</a> <a href="../tags/devops-principles/" style="font-size: 22px;">DevOps Principles</a> <a href="../tags/development-environments/" style="font-size: 22px;">Development Environments</a> <a href="../tags/distributed-file-systems/" style="font-size: 24.5px;">Distributed File Systems</a> <a href="../tags/docker/" style="font-size: 39.5px;">Docker</a> <a href="../tags/docker-compose/" style="font-size: 24.5px;">Docker Compose</a> <a href="../tags/docker-swarm/" style="font-size: 22px;">Docker Swarm</a> <a href="../tags/docker-volumes/" style="font-size: 22px;">Docker Volumes</a> <a href="../tags/domain-name-registrars/" style="font-size: 22px;">Domain Name Registrars</a> <a href="../tags/edr/" style="font-size: 22px;">EDR</a> <a href="../tags/etl/" style="font-size: 22px;">ETL</a> <a href="../tags/edge-computing/" style="font-size: 22px;">Edge Computing</a> <a href="../tags/edge-virtualization-engine/" style="font-size: 22px;">Edge Virtualization Engine</a> <a href="../tags/educational/" style="font-size: 24.5px;">Educational</a> <a href="../tags/embedded-computing/" style="font-size: 22px;">Embedded Computing</a> <a href="../tags/embedded-networks/" style="font-size: 22px;">Embedded Networks</a> <a href="../tags/embedded-systems/" style="font-size: 24.5px;">Embedded Systems</a> <a href="../tags/encryption/" style="font-size: 22px;">Encryption</a> <a href="../tags/endpoint-detection-and-response/" style="font-size: 22px;">Endpoint Detection and Response</a> <a href="../tags/endpoint-threat-detection-and-response/" style="font-size: 22px;">Endpoint Threat Detection and Response</a> <a href="../tags/excel/" style="font-size: 22px;">Excel</a> <a href="../tags/file-sharing/" style="font-size: 24.5px;">File Sharing</a> <a href="../tags/free-database-management-systems/" style="font-size: 22px;">Free Database Management Systems</a> <a href="../tags/fundamentals/" style="font-size: 29.5px;">Fundamentals</a> <a href="../tags/gcp/" style="font-size: 22px;">GCP</a> <a href="../tags/git/" style="font-size: 22px;">Git</a> <a href="../tags/github-actions/" style="font-size: 22px;">GitHub Actions</a> <a href="../tags/go/" style="font-size: 22px;">Go</a> <a href="../tags/google-chrome-labs/" style="font-size: 22px;">Google Chrome Labs</a> <a href="../tags/graphic-design/" style="font-size: 22px;">Graphic Design</a> <a href="../tags/html-editors/" style="font-size: 22px;">HTML Editors</a> <a href="../tags/hashicorp/" style="font-size: 22px;">HashiCorp</a> <a href="../tags/iaas/" style="font-size: 22px;">Iaas</a> <a href="../tags/identity-based-access/" style="font-size: 22px;">Identity-based access</a> <a href="../tags/image-compression/" style="font-size: 22px;">Image Compression</a> <a href="../tags/in-memory-database/" style="font-size: 22px;">In-memory Database</a> <a href="../tags/infrastructure-as-code/" style="font-size: 22px;">Infrastructure as Code</a> <a href="../tags/internet-protocol-based-network-software/" style="font-size: 24.5px;">Internet Protocol Based Network Software</a> <a href="../tags/internet-protocols/" style="font-size: 24.5px;">Internet Protocols</a> <a href="../tags/internet-security/" style="font-size: 22px;">Internet Security</a> <a href="../tags/intrinsic-functions/" style="font-size: 22px;">Intrinsic Functions</a> <a href="../tags/java-development-tools/" style="font-size: 22px;">Java Development Tools</a> <a href="../tags/k3s/" style="font-size: 29.5px;">K3s</a> <a href="../tags/k8s/" style="font-size: 22px;">K8s</a> <a href="../tags/kubernetes/" style="font-size: 32px;">Kubernetes</a> <a href="../tags/lf-edge/" style="font-size: 24.5px;">LF Edge</a> <a href="../tags/lightweight-kubernetes/" style="font-size: 22px;">Lightweight Kubernetes</a> <a href="../tags/lightweight-markup-languages/" style="font-size: 22px;">Lightweight Markup Languages</a> <a href="../tags/linkedin/" style="font-size: 22px;">LinkedIn</a> <a href="../tags/linux/" style="font-size: 22px;">Linux</a> <a href="../tags/linux-text-editors/" style="font-size: 22px;">Linux Text Editors</a> <a href="../tags/lisp/" style="font-size: 22px;">Lisp</a> <a href="../tags/malware-detection/" style="font-size: 22px;">Malware Detection</a> <a href="../tags/management-systems/" style="font-size: 24.5px;">Management Systems</a> <a href="../tags/markup-language/" style="font-size: 22px;">Markup Language</a> <a href="../tags/message-broker/" style="font-size: 22px;">Message Broker</a> <a href="../tags/message-brokers/" style="font-size: 22px;">Message Brokers</a> <a href="../tags/metrics/" style="font-size: 22px;">Metrics</a> <a href="../tags/microsoft-azure/" style="font-size: 27px;">Microsoft Azure</a> <a href="../tags/middleware/" style="font-size: 24.5px;">Middleware</a> <a href="../tags/monitoring/" style="font-size: 22px;">Monitoring</a> <a href="../tags/monolith/" style="font-size: 22px;">Monolith</a> <a href="../tags/nfs/" style="font-size: 22px;">NFS</a> <a href="../tags/nfs-share/" style="font-size: 22px;">NFS Share</a> <a href="../tags/network-booting/" style="font-size: 22px;">Network Booting</a> <a href="../tags/network-file-system/" style="font-size: 22px;">Network File System</a> <a href="../tags/network-file-systems/" style="font-size: 24.5px;">Network File Systems</a> <a href="../tags/network-file-transfer-protocols/" style="font-size: 24.5px;">Network File Transfer Protocols</a> <a href="../tags/network-management/" style="font-size: 22px;">Network Management</a> <a href="../tags/network-traffic-analysis/" style="font-size: 22px;">Network Traffic Analysis</a> <a href="../tags/networking/" style="font-size: 29.5px;">Networking</a> <a href="../tags/open-source/" style="font-size: 32px;">Open Source</a> <a href="../tags/open-source-projects/" style="font-size: 22px;">Open Source Projects</a> <a href="../tags/open-source-software/" style="font-size: 22px;">Open Source Software</a> <a href="../tags/openpgp/" style="font-size: 22px;">OpenPGP</a> <a href="../tags/package-managers/" style="font-size: 24.5px;">Package Managers</a> <a href="../tags/package-manager/" style="font-size: 22px;">Package manager</a> <a href="../tags/packer/" style="font-size: 22px;">Packer</a> <a href="../tags/palo-alto-networks/" style="font-size: 24.5px;">Palo Alto Networks</a> <a href="../tags/pandas/" style="font-size: 22px;">Pandas</a> <a href="../tags/pipelines/" style="font-size: 22px;">Pipelines</a> <a href="../tags/pre-build-data-structures/" style="font-size: 22px;">Pre-Build Data Structures</a> <a href="../tags/programming/" style="font-size: 22px;">Programming</a> <a href="../tags/programming-languages/" style="font-size: 24.5px;">Programming Languages</a> <a href="../tags/provisioning/" style="font-size: 24.5px;">Provisioning</a> <a href="../tags/python/" style="font-size: 27px;">Python</a> <a href="../tags/python-development-tools/" style="font-size: 22px;">Python Development Tools</a> <a href="../tags/r/" style="font-size: 22px;">R</a> <a href="../tags/rdbms/" style="font-size: 22px;">RDBMS</a> <a href="../tags/rhel/" style="font-size: 22px;">RHEL</a> <a href="../tags/raspberry-pi/" style="font-size: 34.5px;">Raspberry Pi</a> <a href="../tags/raspberry-pi/" style="font-size: 22px;">Raspberry pi</a> <a href="../tags/red-hat/" style="font-size: 22px;">Red Hat</a> <a href="../tags/relational-database-management-systems/" style="font-size: 22px;">Relational Database Management Systems</a> <a href="../tags/relational-databases/" style="font-size: 22px;">Relational Databases</a> <a href="../tags/reverse-proxy/" style="font-size: 22px;">Reverse Proxy</a> <a href="../tags/svn/" style="font-size: 22px;">SVN</a> <a href="../tags/screen-recording/" style="font-size: 22px;">Screen Recording</a> <a href="../tags/scripting/" style="font-size: 24.5px;">Scripting</a> <a href="../tags/scripting-languages/" style="font-size: 22px;">Scripting languages</a> <a href="../tags/search-by-date/" style="font-size: 22px;">Search by date</a> <a href="../tags/security/" style="font-size: 24.5px;">Security</a> <a href="../tags/security-technology/" style="font-size: 22px;">Security Technology</a> <a href="../tags/server-monitoring/" style="font-size: 22px;">Server Monitoring</a> <a href="../tags/serverless/" style="font-size: 22px;">Serverless</a> <a href="../tags/serverless-functions/" style="font-size: 22px;">Serverless Functions</a> <a href="../tags/shared-volumes/" style="font-size: 22px;">Shared Volumes</a> <a href="../tags/software/" style="font-size: 22px;">Software</a> <a href="../tags/sorting/" style="font-size: 22px;">Sorting</a> <a href="../tags/spreadsheets/" style="font-size: 22px;">Spreadsheets</a> <a href="../tags/statistics/" style="font-size: 22px;">Statistics</a> <a href="../tags/stream-processing/" style="font-size: 22px;">Stream Processing</a> <a href="../tags/system-management/" style="font-size: 22px;">System Management</a> <a href="../tags/system-monitors/" style="font-size: 24.5px;">System Monitors</a> <a href="../tags/systems-design/" style="font-size: 22px;">Systems Design</a> <a href="../tags/systems-management/" style="font-size: 22px;">Systems Management</a> <a href="../tags/the-linux-foundation/" style="font-size: 22px;">The Linux Foundation</a> <a href="../tags/time-series-database/" style="font-size: 22px;">Time Series Database</a> <a href="../tags/time-series-database/" style="font-size: 22px;">Time series database</a> <a href="../tags/tools/" style="font-size: 22px;">Tools</a> <a href="../tags/troubleshooting/" style="font-size: 22px;">Troubleshooting</a> <a href="../tags/ubuntu/" style="font-size: 24.5px;">Ubuntu</a> <a href="../tags/ubuntu-22-04/" style="font-size: 22px;">Ubuntu 22.04</a> <a href="../tags/vmware/" style="font-size: 22px;">VMWare</a> <a href="../tags/vpn/" style="font-size: 22px;">VPN</a> <a href="../tags/version-control/" style="font-size: 32px;">Version Control</a> <a href="../tags/virtualization/" style="font-size: 24.5px;">Virtualization</a> <a href="../tags/volumes/" style="font-size: 22px;">Volumes</a> <a href="../tags/web-development/" style="font-size: 22px;">Web Development</a> <a href="../tags/web-framework/" style="font-size: 22px;">Web Framework</a> <a href="../tags/wireless/" style="font-size: 22px;">Wireless</a> <a href="../tags/workers/" style="font-size: 22px;">Workers</a> <a href="../tags/workflow/" style="font-size: 22px;">Workflow</a> <a href="../tags/xdr/" style="font-size: 22px;">XDR</a> <a href="../tags/xml-editors/" style="font-size: 22px;">XML Editors</a> <a href="../tags/awk/" style="font-size: 22px;">awk</a> <a href="../tags/cli-tools/" style="font-size: 22px;">cli-tools</a> <a href="../tags/e2fsck/" style="font-size: 22px;">e2fsck</a> <a href="../tags/fsck/" style="font-size: 22px;">fsck</a> <a href="../tags/grep/" style="font-size: 24.5px;">grep</a> <a href="../tags/iwctl/" style="font-size: 22px;">iwctl</a> <a href="../tags/iwmon/" style="font-size: 22px;">iwmon</a> <a href="../tags/kubectl/" style="font-size: 34.5px;">kubectl</a> <a href="../tags/kubernetes/" style="font-size: 27px;">kubernetes</a> <a href="../tags/regex/" style="font-size: 24.5px;">regex</a> <a href="../tags/sed/" style="font-size: 22px;">sed</a></div>
+                    <div style="display: none;" id="recent">
+                        <ul id="recent-post"">
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../jellyfin-setup-and-deployment/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../jellyfin-setup-and-deployment/" class="title">Jellyfin Setup and Deployment</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/file-servers/">File Servers</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-jellyfin/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-jellyfin/" class="title">What is Jellyfin?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/file-servers/">File Servers</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-apache-kafka/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-apache-kafka/" class="title">What is Apache Kafka?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/message-brokers/">Message Brokers</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/linkedin/" rel="tag">LinkedIn</a>, <a class="tag-link-link" href="../tags/message-broker/" rel="tag">Message Broker</a>, <a class="tag-link-link" href="../tags/middleware/" rel="tag">Middleware</a>, <a class="tag-link-link" href="../tags/open-source/" rel="tag">Open Source</a>, <a class="tag-link-link" href="../tags/stream-processing/" rel="tag">Stream Processing</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../how-is-redis-a-message-broker/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../how-is-redis-a-message-broker/" class="title">How is Redis a Message Broker?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/message-brokers/">Message Brokers</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/message-brokers/" rel="tag">Message Brokers</a>, <a class="tag-link-link" href="../tags/middleware/" rel="tag">Middleware</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../how-to-install-and-setup-qemu-kvm-on-ubuntu-22-04/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../how-to-install-and-setup-qemu-kvm-on-ubuntu-22-04/" class="title">How to Install and Setup QEMU/KVM on Ubuntu 22.04</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/virtualization/">Virtualization</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/virtualization/" rel="tag">Virtualization</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-kvm/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-kvm/" class="title">What is KVM?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/virtualization/">Virtualization</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/red-hat/" rel="tag">Red Hat</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-vagrant/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-vagrant/" class="title">What is Vagrant?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/virtualization/">Virtualization</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/provisioning/" rel="tag">Provisioning</a>, <a class="tag-link-link" href="../tags/virtualization/" rel="tag">Virtualization</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../squoosh/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../squoosh/" class="title">Squoosh!</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/web-servers/">Web Servers</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/cli-tools/" rel="tag">CLI Tools</a>, <a class="tag-link-link" href="../tags/google-chrome-labs/" rel="tag">Google Chrome Labs</a>, <a class="tag-link-link" href="../tags/graphic-design/" rel="tag">Graphic Design</a>, <a class="tag-link-link" href="../tags/image-compression/" rel="tag">Image Compression</a>, <a class="tag-link-link" href="../tags/open-source/" rel="tag">Open Source</a>, <a class="tag-link-link" href="../tags/tools/" rel="tag">Tools</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-wordpress/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-wordpress/" class="title">What is WordPress?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/web-servers/">Web Servers</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../run-wordpress-using-docker/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../run-wordpress-using-docker/" class="title">Run WordPress using Docker</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.743Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/web-servers/">Web Servers</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/docker/" rel="tag">Docker</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-a-site-reliability-engineer-sre/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-a-site-reliability-engineer-sre/" class="title">What is a Site Reliability Engineer (SRE)?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-yaml/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-yaml/" class="title">What is YAML?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/programming-languages/">Programming Languages</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/programming-languages/yaml/">YAML</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/configuration-files/" rel="tag">Configuration Files</a>, <a class="tag-link-link" href="../tags/lightweight-markup-languages/" rel="tag">Lightweight Markup Languages</a>, <a class="tag-link-link" href="../tags/markup-language/" rel="tag">Markup Language</a>, <a class="tag-link-link" href="../tags/programming-languages/" rel="tag">Programming Languages</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-are-grep-and-awk/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-are-grep-and-awk/" class="title">What are grep and awk?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/programming-languages/">Programming Languages</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/programming-languages/scripting/">Scripting</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/search-by-date/" rel="tag">Search by date</a>, <a class="tag-link-link" href="../tags/awk/" rel="tag">awk</a>, <a class="tag-link-link" href="../tags/grep/" rel="tag">grep</a>, <a class="tag-link-link" href="../tags/regex/" rel="tag">regex</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-a-regular-expression/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-a-regular-expression/" class="title">What is a Regular Expression?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/programming-languages/">Programming Languages</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/programming-languages/scripting/">Scripting</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/awk/" rel="tag">AWK</a>, <a class="tag-link-link" href="../tags/grep/" rel="tag">grep</a>, <a class="tag-link-link" href="../tags/regex/" rel="tag">regex</a>, <a class="tag-link-link" href="../tags/sed/" rel="tag">sed</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../pass-arguments-to-a-shell-script/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../pass-arguments-to-a-shell-script/" class="title">Pass Arguments to a Shell Script</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/programming-languages/">Programming Languages</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/programming-languages/scripting/">Scripting</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-microsoft-endpoint-configuration-manager/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-microsoft-endpoint-configuration-manager/" class="title">What is Microsoft Endpoint Configuration Manager?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/server-administration/windows/">Windows</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../installing-powershell/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../installing-powershell/" class="title">Installing PowerShell</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/server-administration/windows/">Windows</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/scripting/" rel="tag">Scripting</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../powershell-general/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../powershell-general/" class="title">Powershell (General)</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/server-administration/windows/">Windows</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/scripting/" rel="tag">Scripting</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-microsoft-sccm/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-microsoft-sccm/" class="title">What is Microsoft SCCM?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/server-administration/windows/">Windows</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href=""><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="" class="title">Configure WinRM to use HTTPS and CredSSP</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/server-administration/windows/">Windows</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/ansible/" rel="tag">Ansible</a>, <a class="tag-link-link" href="../tags/ansible-windows-configuration/" rel="tag">Ansible Windows Configuration</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-winrm/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-winrm/" class="title">What is WinRM?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/server-administration/">Server Administration</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/server-administration/windows/">Windows</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/ansible/" rel="tag">Ansible</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../what-is-toad/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../what-is-toad/" class="title">What is Toad?</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/databases/">Databases</a>
+                                        <p class="item-date">Keywords: <a class="tag-link-link" href="../tags/analytics/" rel="tag">Analytics</a>, <a class="tag-link-link" href="../tags/big-data/" rel="tag">Big Data</a>, <a class="tag-link-link" href="../tags/database-administration/" rel="tag">Database Administration</a></p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../automatic-backups-to-ipfs/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../automatic-backups-to-ipfs/" class="title">Automatic Backups to IPFS</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/file-servers/">File Servers</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../how-to-install-ipfs/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../how-to-install-ipfs/" class="title">How to Install IPFS</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/file-servers/">File Servers</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                                <li>
+                                    
+                                        <div class="item-thumbnail">
+                                            
+                                                <a href="../setting-up-an-ipfs-server-on-a-raspberry-pi/"><img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/h_100,f_auto/gold-book" style="border-radius: 25px;border-width: 2px;border-style:inset;"></a>
+                                            
+                                        </div>
+                                    
+                                    <div style="text-indent: 1%;" class="item-inner">
+                                        <b><p class="item-title"><a href="../setting-up-an-ipfs-server-on-a-raspberry-pi/" class="title">Setting up an IPFS Server on a Raspberry Pi</a></p></b>
+                                        <p class="item-date"><time datetime="2022-08-15T04:48:51.739Z" itemprop="datePublished">August 15th 2022, 4:48 am</time></p>
+                                        <p class="item-category"><a class="article-category-link" href="../categories/servers/">Servers</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="../categories/servers/file-servers/">File Servers</a>
+                                        <p class="item-date">Keywords: </p>
+                                    </div>
+                                </li>
+                            
+                        </ul>
+                    </div>
+                    <div style="display: none;" id='categories'>
+                        
+                        
+                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Big Data
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Big Query
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-big-query/">What is Big Query?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Data Warehouse
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-a-data-warehouse/">What is a Data Warehouse?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Frictionless
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-frictionless-data/">What is Frictionless Data</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../data-engineering/">Data Engineering</a></li>  <li class="file"><a href="../what-is-big-data/">What is Big Data?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            CICD
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            AWS Code Pipeline
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../aws-codepipeline/">AWS CodePipeline</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            GitOps
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Flux
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-flux/">What is Flux?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-gitops/">What is GitOps?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Packer
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Tutorials
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            AWS
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../build-an-image-for-an-aws-ec2-instance-with-packer/">Build an Image for an AWS EC2 Instance with Packer</a></li>  <li class="file"><a href="../using-packer-to-provision-an-ubuntu-ami-with-redis-installed/">Using Packer to Provision an Ubuntu AMI with Redis Installed</a></li>  <li class="file"><a href="../create-a-vagrant-box-from-an-ami-with-packer-post-processors/">Create a Vagrant Box from an AMI with Packer Post-Processors</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Docker
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-build-a-basic-docker-ubuntu-image-with-packer/">How to Build a Basic Docker Ubuntu Image with Packer</a></li>  <li class="file"><a href="../how-to-build-multiple-images-in-parallel-with-packer/">How to Build Multiple Images in Parallel with Packer</a></li>  <li class="file"><a href="../packer-post-processors/">Packer Post Processors</a></li>  <li class="file"><a href="../how-to-provision-a-docker-image-with-packer/">How to Provision a Docker Image with Packer</a></li>  <li class="file"><a href="../using-variables-with-packer-configuration-files/">Using Variables with Packer Configuration Files</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-packer/">What is Packer?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-continuous-deployment/">What is Continuous Deployment?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Clouds
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            AWS
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Analytics
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../amazon-athena/">Amazon Athena</a></li>  <li class="file"><a href="../amazon-cloudsearch/">Amazon CloudSearch</a></li>  <li class="file"><a href="../amazon-emr/">Amazon EMR</a></li>  <li class="file"><a href="../amazon-finspace/">Amazon FinSpace</a></li>  <li class="file"><a href="../amazon-kinesis/">Amazon Kinesis</a></li>  <li class="file"><a href="../amazon-managed-streaming-for-apache-kafka/">Amazon Managed Streaming for Apache Kafka</a></li>  <li class="file"><a href="../amazon-opensearch-service-formerly-elasticsearch/">Amazon OpenSearch Service (formerly ElasticSearch)</a></li>  <li class="file"><a href="../amazon-quicksight/">Amazon QuickSight</a></li>  <li class="file"><a href="../amazon-redshift/">Amazon Redshift</a></li>  <li class="file"><a href="../aws-data-exchange/">AWS Data Exchange</a></li>  <li class="file"><a href="../aws-data-pipeline/">AWS Data Pipeline</a></li>  <li class="file"><a href="../aws-glue/">AWS Glue</a></li>  <li class="file"><a href="../aws-lake-formation/">AWS Lake Formation</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Blockchain
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../amazon-managed-blockchain/">Amazon Managed Blockchain</a></li>  <li class="file"><a href="../amazon-quantum-ledger-database/">Amazon Quantum Ledger Database</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Compute
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../amazon-ec2-auto-scaling/">Amazon EC2 Auto Scaling</a></li>  <li class="file"><a href="../amazon-ec2/">Amazon EC2</a></li>  <li class="file"><a href="../amazon-lightsail/">Amazon Lightsail</a></li>  <li class="file"><a href="../aws-app-runner/">AWS App Runner</a></li>  <li class="file"><a href="../aws-batch/">AWS Batch</a></li>  <li class="file"><a href="../aws-elastic-beanstalk/">AWS Elastic Beanstalk</a></li>  <li class="file"><a href="../aws-lambda/">AWS Lambda</a></li>  <li class="file"><a href="../aws-outposts/">AWS Outposts</a></li>  <li class="file"><a href="../aws-serverless-application-repository/">AWS Serverless Application Repository</a></li>  <li class="file"><a href="../aws-snow-family/">AWS Snow Family</a></li>  <li class="file"><a href="../aws-wavelength/">AWS Wavelength</a></li>  <li class="file"><a href="../vmware-cloud-on-aws/">VMWare Cloud on AWS</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Database
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../amazon-aurora/">Amazon Aurora</a></li>  <li class="file"><a href="../amazon-documentdb/">Amazon DocumentDB</a></li>  <li class="file"><a href="../amazon-elasticache/">Amazon ElastiCache</a></li>  <li class="file"><a href="../amazon-rds/">Amazon RDS</a></li>  <li class="file"><a href="../amazon-redshift-database/">Amazon Redshift (Database)</a></li>  <li class="file"><a href="../aws-database-migration-service/">AWS Database Migration Service</a></li>  <li class="file"><a href="../aws-glue-database/">AWS Glue (Database)</a></li>  <li class="file"><a href="../aws-neptune/">AWS Neptune</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Developer Tools
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            AWS Command Line Interface
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../using-the-aws-cli-docker-image/">Using the AWS CLI Docker Image</a></li>  <li class="file"><a href="../what-is-the-aws-command-line-interface/">What is the AWS Command Line Interface?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../amazon-corretto/">Amazon Corretto</a></li>  <li class="file"><a href="../aws-cloud-development-kit-cdk/">AWS Cloud Development Kit (CDK)</a></li>  <li class="file"><a href="../aws-cloud9/">AWS Cloud9</a></li>  <li class="file"><a href="../aws-cloudshell/">AWS CloudShell</a></li>  <li class="file"><a href="../aws-codeartifact/">AWS CodeArtifact</a></li>  <li class="file"><a href="../aws-codebuild/">AWS CodeBuild</a></li>  <li class="file"><a href="../aws-codecommit/">AWS CodeCommit</a></li>  <li class="file"><a href="../aws-codeguru/">AWS CodeGuru</a></li>  <li class="file"><a href="../aws-codestar/">AWS CodeStar</a></li>  <li class="file"><a href="../aws-device-farm/">AWS Device Farm</a></li>  <li class="file"><a href="../aws-fault-injection-simulator/">AWS Fault Injection Simulator</a></li>  <li class="file"><a href="../aws-tools-and-sdks/">AWS Tools and SDKs</a></li>  <li class="file"><a href="../aws-x-ray/">AWS X-Ray</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Networking Content Delivery
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            CloudFront
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-cloudfront/">What is CloudFront?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Direct Connect
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-aws-direct-connect/">What is AWS Direct Connect?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            VPC
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-amazon-vpc/">What is Amazon VPC?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Storage
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../amazon-elastic-block-store-ebs/">Amazon Elastic Block Store (EBS)</a></li>  <li class="file"><a href="../amazon-elastic-file-system-efs/">Amazon Elastic File System (EFS)</a></li>  <li class="file"><a href="../amazon-fsx-for-lustre/">Amazon FSx for Lustre</a></li>  <li class="file"><a href="../amazon-fsx-for-windows-file-server/">Amazon FSx for Windows File Server</a></li>  <li class="file"><a href="../amazon-simple-storage-service-s3/">Amazon Simple Storage Service (S3)</a></li>  <li class="file"><a href="../aws-backup/">AWS Backup</a></li>  <li class="file"><a href="../aws-storage-gateway/">AWS Storage Gateway</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Azure
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../azure-devops-services/">Azure DevOps Services</a></li>  <li class="file"><a href="../azure-kubernetes-service-aks/">Azure Kubernetes Service (AKS)</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Container Orchestration
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Amazon Elastic Kubernetes Service (EKS)
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            eksctl
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-eksctl/">What is eksctl?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-amazon-elastic-kubernetes-service-eks/">What is Amazon Elastic Kubernetes Service (EKS)?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Docker
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Docker Compose
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../docker-compose-vs-docker-stack/">Docker Compose vs Docker Stack</a></li>  <li class="file"><a href="../installing-docker-compose/">Installing Docker Compose</a></li>  <li class="file"><a href="../what-is-docker-compose/">What is Docker Compose?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Docker Swarm
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-deploy-docker-swarm/">How to Deploy Docker Swarm</a></li>  <li class="file"><a href="../how-to-deploy-a-docker-swarm-visualizer/">How to Deploy a Docker Swarm Visualizer</a></li>  <li class="file"><a href="../what-is-docker-swarm/">What is Docker Swarm</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../the-container-network-model/">The Container Network Model</a></li>  <li class="file"><a href="../docker-networking/">Docker Networking</a></li>  <li class="file"><a href="../mounting-nfs-volumes-with-docker/">Mounting NFS Volumes with Docker</a></li>  <li class="file"><a href="../docker-volumes/">Docker Volumes</a></li>  <li class="file"><a href="../installing-docker-on-a-raspberry-pi/">Installing Docker on a Raspberry Pi</a></li>  <li class="file"><a href="../installing-docker-on-ubuntu/">Installing Docker on Ubuntu</a></li>  <li class="file"><a href="../run-a-command-in-a-running-container/">Run a command in a running container</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            EdgeX Foundry
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-edgex-foundry/">What is EdgeX Foundry?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Kubernetes
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Akri
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-akri/">What is Akri?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Helm
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            The Artifact Hub
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-the-artifact-hub/">What is the Artifact Hub?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-helm/">What is Helm?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            K3S
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-k3s/">What is K3s?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Kustomize
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-kustomize/">What is Kustomize?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            etcd
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-etcd/">What is etcd?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            kubectl
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../working-with-kubectl-config-files/">Working with kubectl config Files</a></li>  <li class="file"><a href="../installing-kubectl-on-ubuntu/">Installing kubectl on Ubuntu</a></li>  <li class="file"><a href="../installing-kubectl-on-ubuntu/">Installing kubectl on Ubuntu</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../deploy-applications-to-a-cluster/">Deploy Applications to a Cluster</a></li>  <li class="file"><a href="../what-is-kubernetes/">What is Kubernetes?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../amazon-ecs-anywhere/">Amazon ECS Anywhere</a></li>  <li class="file"><a href="../amazon-eks-distro/">Amazon EKS Distro</a></li>  <li class="file"><a href="../amazon-elastic-container-registry/">Amazon Elastic Container Registry</a></li>  <li class="file"><a href="../amazon-elastic-container-service-ecs/">Amazon Elastic Container Service (ECS)</a></li>  <li class="file"><a href="../aws-app2container/">AWS App2Container</a></li>  <li class="file"><a href="../aws-copilot/">AWS Copilot</a></li>  <li class="file"><a href="../aws-fargate/">AWS Fargate</a></li>  <li class="file"><a href="../red-hat-openshift-service-on-aws/">Red Hat OpenShift Service on AWS</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Foundations and Organizations
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            CNCF
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-the-cncf/">What is the CNCF?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Palo Alto Networks
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-palo-alto-networks/">What is Palo Alto Networks?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            The Apache Software Foundation
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-the-apache-software-foundation/">What is the Apache Software Foundation?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            The Linux Foundation
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-the-linux-foundation/">What is the Linux Foundation?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Infrastructure as Code
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            ARM Templates
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-are-arm-templates/">What are ARM Templates?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Azure Blueprints
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-are-azure-blueprints/">What are Azure Blueprints?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Configuration Management
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Ansible
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../deploy-a-k3s-cluster-using-ansible/">Deploy a K3s Cluster using Ansible</a></li>  <li class="file"><a href="../configuring-ansible-for-windows/">Configuring Ansible for Windows</a></li>  <li class="file"><a href="../manage-cron-jobs-using-ansible/">Manage Cron Jobs Using Ansible</a></li>  <li class="file"><a href="../what-is-ansible/">What is Ansible?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Infrastructure Provisioning
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            AWS CloudFormation
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../cloudformation-cli-tool/">CloudFormation CLI Tool</a></li>  <li class="file"><a href="../cloudformation-commands-for-aws-cli/">CloudFormation Commands for AWS CLI</a></li>  <li class="file"><a href="../cloudformation-resource-and-property-types-reference/">CloudFormation Resource and Property Types Reference</a></li>  <li class="file"><a href="../what-is-aws-cloudformation/">What is AWS CloudFormation</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            TerraForm
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../terraform-execution-plans/">Terraform Execution Plans</a></li>  <li class="file"><a href="../terraform-resource-graphs/">Terraform Resource Graphs</a></li>  <li class="file"><a href="../terraform-lifecycle/">Terraform Lifecycle</a></li>  <li class="file"><a href="../what-is-change-management/">What is Change Management?</a></li>  <li class="file"><a href="../what-is-terraform/">What is Terraform?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Version Control
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Git
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Everyday Usage
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../branching-and-merging-best-practices/">Branching and Merging Best Practices</a></li>  <li class="file"><a href="../best-practices-for-git-commit-messages/">Best Practices for Git Commit Messages</a></li>  <li class="file"><a href="../git-cheat-sheets/">Git Cheat Sheets</a></li>  <li class="file"><a href="../git-for-developer-participants-of-a-group-project/">Git for Developer Participants of a Group Project</a></li>  <li class="file"><a href="../git-for-project-integrators/">Git for Project Integrators</a></li>  <li class="file"><a href="../git-for-standalone-developers/">Git for Standalone Developers</a></li>  <li class="file"><a href="../repository-administrator/">Repository Administrator</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-git/">What is git?</a></li>  <li class="file"><a href="../what-is-a-monorepo/">What is a Monorepo?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Subversion
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-subversion/">What is Subversion?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Monitoring and Logging
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Datadog
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-datadog/">What is Datadog?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Dynatrace
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-dynatrace/">What is Dynatrace?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Fluentd
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-fluentd/">What is Fluentd?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Grafana
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../cluster-monitoring-setup-using-grafana/">Cluster Monitoring Setup using Grafana</a></li>  <li class="file"><a href="../what-is-grafana/">What is Grafana?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Prometheus
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-prometheus/">What is Prometheus?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Network and Security
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Architecture
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-logical-technical-architecture/">What is Logical Technical Architecture?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Cloudflare
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-cloudflare/">What is Cloudflare?</a></li>  <li class="file"><a href="../what-is-wrangler/">What is Wrangler?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Encryption
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            GPG
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-gnu-privacy-guard/">What is GNU Privacy Guard?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            SSL
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-ssl/">What is SSL?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Remote Access
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Network File System
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../create-an-nfs-share/">Create an NFS Share</a></li>  <li class="file"><a href="../what-is-network-file-system/">What is Network File System?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            SSH
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Bastion Hosts
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-use-ssh-with-a-bastion-host/">How to Use SSH With a Bastion Host</a></li>  <li class="file"><a href="../what-is-a-bastion-host/">What is a Bastion Host?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../securely-setup-ssh-keys-on-ubuntu/">Securely Setup SSH Keys on Ubuntu</a></li>  <li class="file"><a href="../ssh-config-file-settings/">SSH Config File Settings</a></li>  <li class="file"><a href="../what-is-ssh/">What is SSH?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            VPN
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            OpenVPN
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../openvpn-client-setup/">OpenVPN Client Setup</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            ProtonVPN
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../protonvpn-client-setup/">ProtonVPN Client Setup</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Wireguard
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-wireguard/">What is WireGuard?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../testing-for-vpn-leaks/">Testing for VPN Leaks</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Vault
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-vault/">What is Vault?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../endpoint-detection-response/">Endpoint Detection Response</a></li>  <li class="file"><a href="../extended-detection-and-response/">Extended detection and response</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Programming Languages
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Bash
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../keyboard-shortcuts-for-bash/">Keyboard Shortcuts For Bash</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            CSS
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-css/">What is CSS?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Closure
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-closure/">What is Closure?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Development Environments
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            IDLE
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-idle/">What is IDLE?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            PyCharm
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-pycharm/">What is PyCharm?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Visual Studio
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Visual Studio Code
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-sort-a-list-alphabetically/">How to Sort a List Alphabetically</a></li>  <li class="file"><a href="../what-is-visual-studio-code/">What is Visual Studio Code?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            HashCorp Configuration Language (HCL)
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-hashicorp-configuration-language-hcl/">What is HashiCorp Configuration Language (HCL)?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Javascript
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Nodejs
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            npm
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-npm/">What is npm?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            yarn
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-yarn/">What is yarn?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../how-to-install-any-version-of-node-js-on-debian-based-distros/">How to Install Any Version of Node.js on Debian Based Distros</a></li>  <li class="file"><a href="../what-is-nodejs/">What is nodejs?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../javascript-comparison-operators/">Javascript Comparison Operators</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Python
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Django
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-django/">What is Django?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Examples
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-combine-multiple-csv-files-using-python/">How to Combine Multiple CSV Files using Python</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Flask
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../running-flask/">Running Flask</a></li>  <li class="file"><a href="../what-is-flask/">What is Flask?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Jupyter
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-jupyter/">What is Jupyter?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Libraries
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            openpyxl
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-openpyxl/">What is openpyxl?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            pandas
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-pandas/">What is pandas?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Seaborn
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-seaborn/">What is Seaborn?</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../basics-of-python/">Basics of Python</a></li>  <li class="file"><a href="../python-built-in-functions/">Python Built-in Functions</a></li>  <li class="file"><a href="../python-nested-function-execution/">Python Nested Function Execution</a></li>  <li class="file"><a href="../python-functions/">Python Functions</a></li>  <li class="file"><a href="../python-modules/">Python Modules</a></li>  <li class="file"><a href="../setup-a-python-virtual-environment/">Setup a Python Virtual Environment</a></li>  <li class="file"><a href="../what-is-python/">What is Python?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Ruby
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-ruby-programming-language/">What is Ruby Programming Language?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Scripting
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Bash
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-create-a-bash-script/">How to Create a Bash Script</a></li>  <li class="file"><a href="../sample-script/">Sample Script</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Regular Expressions
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-are-grep-and-awk/">What are grep and awk?</a></li>  <li class="file"><a href="../what-is-a-regular-expression/">What is a Regular Expression?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Shell
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../pass-arguments-to-a-shell-script/">Pass Arguments to a Shell Script</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            YAML
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-yaml/">What is YAML?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory open">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder-open"></i>
+                                            &nbsp;
+                                            Server Administration
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Linux
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Command-Line
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Asciinema
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            test
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../index.html"></a></li>  <li class="file"><a href="../index.html"></a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../asciinema-test/">Asciinema Test</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            cURL
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-curl/">What is cURL?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Directory Structure
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            etc
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-etc/">What is etc?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Distributions
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Alpine Linux
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-alpine-linux/">What is Alpine Linux?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Apertis
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-apertis/">What is Apertis?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            BalenaOS
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-balenaos/">What is BalenaOS?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Bottlerocket
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-bottlerocket/">What is Bottlerocket?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Kali Linux
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-kali-linux/">What is Kali Linux?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Manjaro
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Wireless Configuration
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../inet-wireless-daemon-iwd/">iNet Wireless Daemon (iwd)</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../how-to-install-manjaro/">How to Install Manjaro?</a></li>  <li class="file"><a href="../what-is-manjaro/">What is Manjaro?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Project EVE
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-project-eve/">What is Project Eve?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Raspberry Pi OS
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Pi-Hole
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../deploy-pi-hole-to-kubernetes/">Deploy Pi-Hole to Kubernetes</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            PiVPN
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-pivpn/">What is PiVPN?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Troubleshooting
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-run-a-filesystem-check-on-raspberry-pi-os/">How to Run a Filesystem Check on Raspberry Pi OS</a></li>  <li class="file"><a href="../remove-the-default-pi-user/">Remove the Default Pi User</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-raspberry-pi-os/">What is Raspberry Pi OS?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Red Hat Enterprise Linux
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-red-hat-enterprise-linux/">What is Red Hat Enterprise Linux?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Ubuntu
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Package Managers
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../dpkg/">dpkg</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-ubuntu/">What is Ubuntu?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Hardware
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            ASUS Zenbook
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Troubleshooting
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../asus-zenbook-keyboard-not-working-after-fresh-ubuntu-install/">Asus ZenBook Keyboard Not Working After Fresh Ubuntu Install</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Job Scheduling
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            cron
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../scheduling-tasks-with-cron/">Scheduling Tasks with cron</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory open">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder-open"></i>
+                                            &nbsp;
+                                            Windows
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Microsoft Endpoint Configuration Manager (MECM)
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-microsoft-endpoint-configuration-manager/">What is Microsoft Endpoint Configuration Manager?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            PowerShell
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../installing-powershell/">Installing PowerShell</a></li>  <li class="file"><a href="../powershell-general/">Powershell (General)</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            SCCM
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-microsoft-sccm/">What is Microsoft SCCM?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory open">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder-open"></i>
+                                            &nbsp;
+                                            WinRM
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file active"><a href="">Configure WinRM to use HTTPS and CredSSP</a></li>  <li class="file"><a href="../what-is-winrm/">What is WinRM?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../what-is-a-site-reliability-engineer-sre/">What is a Site Reliability Engineer (SRE)?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Servers
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Databases
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            NoSQL
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            AWS DynamoDB
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../amazon-dynamodb/">Amazon DynamoDB</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            InfluxDB
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-influxdb/">What is InfluxDB?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Redis
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-redis/">What is Redis?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            SQL
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            PostgreSQL
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-postgresql/">What is PostgreSQL?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Toad
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-toad/">What is Toad?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            File Servers
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            IPFS
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Cluster
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-setup-an-ipfs-cluster/">How to Setup an IPFS Cluster</a></li>  </ul> 
+                                    </li> 
+                                     <li class="file"><a href="../automatic-backups-to-ipfs/">Automatic Backups to IPFS</a></li>  <li class="file"><a href="../how-to-install-ipfs/">How to Install IPFS</a></li>  <li class="file"><a href="../setting-up-an-ipfs-server-on-a-raspberry-pi/">Setting up an IPFS Server on a Raspberry Pi</a></li>  <li class="file"><a href="../what-is-ipfs/">What is IPFS?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Jellyfin
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../jellyfin-setup-and-deployment/">Jellyfin Setup and Deployment</a></li>  <li class="file"><a href="../what-is-jellyfin/">What is Jellyfin?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Message Brokers
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Apache Kafka
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-apache-kafka/">What is Apache Kafka?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Redis
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-is-redis-a-message-broker/">How is Redis a Message Broker?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Virtualization
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            KVM
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../how-to-install-and-setup-qemu-kvm-on-ubuntu-22-04/">How to Install and Setup QEMU/KVM on Ubuntu 22.04</a></li>  <li class="file"><a href="../what-is-kvm/">What is KVM?</a></li>  </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Vagrant
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-vagrant/">What is Vagrant?</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Web Servers
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Content Management Systems
+                                        </a>
+                                         <ul class="unstyled" id="tree" > 
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            WordPress
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../what-is-wordpress/">What is WordPress?</a></li>  <li class="file"><a href="../run-wordpress-using-docker/">Run WordPress using Docker</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                    
+                                    <li class="directory">
+                                        <a href="#" data-role="directory">
+                                            <i class="fa fa-folder"></i>
+                                            &nbsp;
+                                            Image Compression
+                                        </a>
+                                         <ul class="unstyled" id="tree" >  <li class="file"><a href="../squoosh/">Squoosh!</a></li>  </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     </ul> 
+                                    </li> 
+                                     </ul> 
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            var iconFolderOpenClass  = 'fa-folder-open';
+                            var iconFolderCloseClass = 'fa-folder';
+                            var iconAllExpandClass = 'fa-angle-double-down';
+                            var iconAllPackClass = 'fa-angle-double-up';
+                            // Handle directory-tree expansion:
+                            // Left-click to expand the directory individually
+                            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                                event.preventDefault();
+                    
+                                var icon = $(this).children('.fa');
+                                var expanded = icon.hasClass(iconFolderOpenClass);
+                                var subtree = $(this).siblings('ul');
+                                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                                if (expanded) {
+                                    if (typeof subtree != 'undefined') {
+                                        subtree.slideUp({ duration: 100 });
+                                    }
+                                    icon.addClass(iconFolderCloseClass);
+                                } else {
+                                    if (typeof subtree != 'undefined') {
+                                        subtree.slideDown({ duration: 100 });
+                                    }
+                                    icon.addClass(iconFolderOpenClass);
+                                }
+                            });
+                            // Right click to expand all subordinate directories
+                            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                                event.preventDefault();
+                                
+                                var icon = $(this).children('.fa');
+                                var expanded = icon.hasClass(iconFolderOpenClass);
+                                var listNode = $(this).siblings('ul');
+                                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                                var icons = $.merge(listNode.find('.fa'), icon);
+                                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                                if(expanded) {
+                                    subtrees.slideUp({ duration: 100 });
+                                    icons.addClass(iconFolderCloseClass);
+                                } else {
+                                    subtrees.slideDown({ duration: 100 });
+                                    icons.addClass(iconFolderOpenClass);
+                                }
+                            })
+                            // Expand the close all directories button
+                            $(document).on('click', '#allExpand', function (event) {
+                                event.preventDefault();
+                                
+                                var icon = $(this).children('.fa');
+                                var expanded = icon.hasClass(iconAllExpandClass);
+                                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                                if(expanded) {
+                                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                                    $('#categories li ul').slideDown({ duration: 100 });
+                                    icon.addClass(iconAllPackClass);
+                                } else {
+                                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                                    $('#categories li ul').slideUp({ duration: 100 });
+                                    icon.addClass(iconAllExpandClass);
+                                }
+                            });  
+                        });
+                    </script>
+                </div>
+                <article id="post-Server Administration/Windows/WinRM/configure-listeners" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        <header class="article-header">
+            <div class="article-meta">
+                
+<div>
+    <a class="category-link" href="../categories/server-administration/">Server Administration</a> <i class="fa fa-angle-right"></i> <a class="category-link" href="../categories/server-administration/windows/">Windows</a> <i class="fa fa-angle-right"></i> <a class="category-link" href="../categories/server-administration/windows/winrm/">WinRM</a>
+</div>
+
+            </div>
+            <h1 class="article-title">
+                <span style="cursor: pointer;" onclick="myFunction3()">Configure WinRM to use HTTPS and CredSSP</span>
+            </h1>
+            <div style="position: relative; margin: auto;">
+                
+                    <img src="https://res.cloudinary.com/alchemist-cookbook/image/upload/w_200,f_auto/winrm" style="border-radius: 25px;border-width: 2px;border-style:inset;">
+                
+                <div style="text-align:justify;">
+                    
+                        <br><b>Keywords</b><br><br> <a class="tag-link-link" href="../tags/ansible/" rel="tag">Ansible</a>, <a class="tag-link-link" href="../tags/ansible-windows-configuration/" rel="tag">Ansible Windows Configuration</a>
+                        
+                <br><br><b>Outline</b>
+                </div>
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Description"><span class="toc-number">1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Steps"><span class="toc-number">2.</span> <span class="toc-text">Steps</span></a></li></ol>
+
+            </div>
+        </header>
+        <div style="text-align:justify;" class="article-entry" itemprop="articleBody">
+            <h2 id="Description">Description</h2>
+<p>This document outlines how to configure CredSSP Authentication for a windows host.</p>
+<p>CredSSP stands for Credential Security Support Provider. CredSSP provides an encrypted Transport Layer Security Protocol channel.</p>
+<h2 id="Steps">Steps</h2>
+<p>For each instance we want to control with Ansible using WinRM we must setup the correct listeners and authentication mechanisms.</p>
+<p>To view the current available listeners on an instance, open PowerShell and run,</p>
+<p><code>&gt; winrm enumerate winrm/config/Listener</code></p>
+<p>To view the current authentication method configuration run,</p>
+<p><code>&gt; winrm get winrm/config/Service</code></p>
+<p>You should see <code>CredSSP = false</code></p>
+<p>To enable CredSSP authentication, download the official Ansible script:</p>
+<p><code>&gt; wget https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1 -OutFile ConfigureRemotingForAnsible.ps1</code></p>
+<p>Use the script,</p>
+<p><code>&gt; .\ConfigureRemotingForAnsible.ps1 -EnableCredSSP -DisableBaiscAuth -Verbose</code></p>
+<p>This command enables CredSSP, disables basic authentication, and configures an https listener.</p>
+<p>To verify this setup,</p>
+<p>Open PowerShell and re-run the following commands,</p>
+<p><code>&gt; winrm enumerate winrm/config/Listener</code></p>
+<p>You should see HTTPS listed as an available listener.</p>
+<p><code>&gt; winrm get winrm/config/Service</code></p>
+<p>You should see <code>CredSSP = true</code></p>
+<p>For security purposes, remove the unsecured HTTP listener:</p>
+<p><code>&gt; Get-ChildItem -Path WSMan:\localhost\Listener | Where-Object &#123; $_.Keys -eq &quot;Transport=HTTP&quot; &#125; | Remove-Item -Recurse -Force</code></p>
+<p>Run the following to ensure HTTP is no longer listed,</p>
+<p><code>&gt; winrm enumerate winrm/config/Listener</code></p>
+<p>Restart the WinRM service,</p>
+<p><code>&gt; restart-service winrm</code></p>
+
+        </div>
+    </div>
+</article>
+                
+            </section>
+        </div>
+        <script type="text/javascript">
+
+var search_path = "../search.xml";
+
+var path = "../search.xml";
+
+searchFunc(path, 'local-search-input', 'local-search-result');
+
+</script>
+
+<script>
+
+  var x = document.getElementById("categories");
+  var p = document.getElementById("recent");
+  var l = document.getElementById("allExpand");
+  var y = document.getElementById("tags");
+
+function myFunction1() {
+  
+  if (x.style.display === "none") {
+    x.style.display = "block";
+    l.style.display = "block";
+    y.style.display = "none";
+    p.style.display = "none";    
+  } else {
+    l.style.display = "none";
+    x.style.display = "none";
+  }
+  
+}
+
+function myFunction2() {
+  
+  if (y.style.display === "none") {
+    y.style.display = "block";
+    x.style.display = "none";
+    l.style.display = "none";
+    p.style.display = "none";
+  } else {
+    y.style.display = "none";
+  }
+}
+
+function myFunction3() {
+  
+  y.style.display = "none";
+  x.style.display = "none";
+  l.style.display = "none";
+  p.style.display = "none";
+  
+}
+
+function myFunction4() {
+  
+  if (p.style.display === "none") {
+    p.style.display = "block";
+    x.style.display = "none";
+    y.style.display = "none";    
+    l.style.display = "none";
+  } else {
+    p.style.display = "none";
+  }
+}
+
+</script>
+
+    </div>
+</body>
+</html>

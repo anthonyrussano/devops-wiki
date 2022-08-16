@@ -1,0 +1,14 @@
+---
+version: "3.5"
+services: # EXAMPLE: docker compose up
+  devops-wiki:
+    image: anthonyrussano/wiki-server:latest
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+      - 4006:4000
+    volumes:
+      - ./public:/site/public
+      - ./source:/site/source

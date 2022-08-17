@@ -19,7 +19,7 @@ jobs:
       - name: npm
         run: npm install hexo-cli -g
       - name: npm
-        run: npm
+        run: npm install
       - name: Run script
         run: |
           sed -e "s*\${gitpass}*$gitpass*" _config_vars.yml | tee _config.yml

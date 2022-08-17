@@ -1,28 +1,22 @@
----
-name: 'deploy'
-
-on:
-  push:
-    branches:
-      - main
-
+on: push
+name: Deploy
 jobs:
-  vm:
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 12.22.x
-      - name: npm
-        run: npm install hexo-cli -g
-      - name: npm
-        run: npm install
-      - name: Run script
-        run: |
-          sed -e "s*\${gitpass}*${{ secrets.GIT_URL }}*" _config_vars.yml | tee _config.yml
-          hexo clean
-          hexo generate
-          hexo deploy
+    - name: Clean
+      uses: heowc/action-hexo@main
+      with:
+        args: clean
+    - name: Generate
+      uses: heowc/action-hexo@main
+      with:
+        args: generate
+    - name: Deploy
+      uses: heowc/action-hexo@main
+      env:
+        EMAIL: me@anthonyrussano.com
+        NAME: Anthony Russano
+      with:
+        args: deploy

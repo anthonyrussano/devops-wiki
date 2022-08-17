@@ -22,7 +22,7 @@ jobs:
         run: npm install
       - name: Run script
         run: |
-          sed -e "s*\${gitpass}*$gitpass*" _config_vars.yml | tee _config.yml
+          sed -e "s*\${gitpass}*${{ secrets.GIT_URL }}*" _config_vars.yml | tee _config.yml
           hexo clean
           hexo generate
           hexo deploy

@@ -18,5 +18,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Deploy
         run: |
-         ./secrets_inject.sh
-        shell: bash
+         hexo clean && hexo generate && hexo deploy

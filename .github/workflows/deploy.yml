@@ -17,4 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Deploy
-        run: ./secrets_inject.sh
+        run: |
+         chmod +x ./secrets_inject.sh
+         ./secrets_inject.sh
+        shell: bash

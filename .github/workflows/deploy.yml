@@ -1,24 +1,16 @@
-on: push
-name: Deploy
+name: Build and Deploy
+on: [push]
 jobs:
-  build:
-    name: Build
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-    - name: Clean
-      uses: heowc/action-hexo@main
-      with:
-        args: clean
-    - name: Generate
-      uses: heowc/action-hexo@main
-      with:
-        args: generate
-    - name: Deploy
-      uses: heowc/action-hexo@main
+      uses: actions/checkout@master
+
+    - name: Build and Deploy
+      uses: renzhaosy/hexo-deploy-action@master
       env:
-        EMAIL: me@anthonyrussano.com
-        NAME: Anthony Russano
-      with:
-        args: deploy
+#         PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUBLISH_REPOSITORY: ${{ secrets.GIT_URL }} # The repository the action should deploy to.
+        BRANCH: master  # The branch the action should deploy to.
+        PUBLISH_DIR: ./public # The folder the action should deploy.

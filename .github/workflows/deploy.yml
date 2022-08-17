@@ -12,16 +12,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-  docker:
-    runs-on: ubuntu-latest
-    container:
-      image: anthonyrussano/wiki-server:latest
-      volumes:
-        - ${{ github.workspace }}/public:/site/public
-        - ${{ github.workspace }}/source:/site/source
-      env:
-        gitpass: ${{ secrets.GIT_URL }}
-    steps:
-      - name: Deploy
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 12.22.x
+          cache: npm
+      - name: npm
+        run: npm install hexo-cli -g
+      - name: npm
+        run: npm
+      - name: Run script
         run: |
-         hexo clean && hexo generate && hexo deploy
+          sed -e "s*\${gitpass}*$gitpass*" _config_vars.yml | tee _config.yml
+          hexo clean
+          hexo generate
+          hexo deploy

@@ -13,13 +13,8 @@ jobs:
       image: anthonyrussano/wiki-server:latest
       env:
         gitpass: ${{ secrets.GIT_URL }}
-      ports:
-        - 80:4000
-      volumes:
-        - ${{ github.workspace }}/public:/site/public
-        - ${{ github.workspace }}/source:/site/source
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Deploy
-        run: (./dep)
+        run: ./dep

@@ -16,8 +16,8 @@ jobs:
       ports:
         - 80:4000
       volumes:
-        - ./public:/site/public
-        - ./source:/site/source
+        - ${{ github.workspace }}/public:/site/public
+        - ${{ github.workspace }}/source:/site/source
     steps:
       - name: Checkout
         uses: actions/checkout@v2

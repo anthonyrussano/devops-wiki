@@ -1,2 +1,3 @@
 FROM anthonyrussano/wiki-server:latest
-COPY source/* /site/source/
+COPY source/_data /site/source/_data
+COPY source/_posts /site/source/_posts

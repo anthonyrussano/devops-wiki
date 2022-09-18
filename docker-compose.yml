@@ -4,4 +4,4 @@ services:
   devops-wiki:
     image: anthonyrussano/devops-wiki:latest
     ports:
-      - 80:4000
+      - 4000:4000
